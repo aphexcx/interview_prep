@@ -1,4 +1,4 @@
-package InterviewBit
+package InterviewBit.arrays
 
 object WaveArray extends App {
   /*
