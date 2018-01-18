@@ -25,26 +25,29 @@ import scala.collection.mutable
 object PascalsTriangle extends App {
   // Memoized
   def generate(A: Int): Array[Array[Int]] = {
-    def go: Int => Array[Int] = memoize {
+    val memo = new mutable.HashMap[Int, Array[Int]]()
+
+    def go: Int => Array[Int] = {
+      case 0 =>
+        Array()
       case 1 =>
         Array(1)
       case 2 =>
         Array(1, 1)
       case c =>
-        1 +: (1 until c - 1).toArray.map { i => go(c - 1)(i) + go(c - 1)(i - 1) } :+ 1
+        memo.getOrElseUpdate(c, {
+          val newrow = 1 +: (1 until c - 1).toArray.map { i => go(c - 1)(i) + go(c - 1)(i - 1) } :+ 1
+          memo.update(c, newrow)
+          newrow
+        })
     }
-
 
     (1 to A).map { r: Int =>
       go(r)
     }.toArray
   }
 
-  def memoize[I, O](f: I => O): I => O = new mutable.HashMap[I, O]() {
-    override def apply(key: I): O = getOrElseUpdate(key, f(key))
-  }
-
-  println(generate(5).map(a => println(a.map(print))))
+  println(generate(5000).map(a => println(a.map(print))))
 
   // Regular version
   def slowGenerate(A: Int): Array[Array[Int]] = {
