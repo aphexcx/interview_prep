@@ -17,7 +17,7 @@ trait LinkedListNode[E] {
   def setValue(value: E): Unit
 
   /* getter/setter for the subsequent node, or null if this is the last node */
-  def getNext: LinkedListNode[E]
+  def getNext: Option[LinkedListNode[E]]
 
   def setNext(next: LinkedListNode[E]): Unit
 
