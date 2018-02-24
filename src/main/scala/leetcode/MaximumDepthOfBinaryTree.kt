@@ -24,15 +24,13 @@ class TreeNode(var `val`: Int = 0) {
     var right: TreeNode? = null
 }
 
-class Solution2 {
-    fun maxDepth(root: TreeNode?): Int {
-        fun go(root: TreeNode?, depth: Int): Int =
-            when {
-                root == null -> 0
-                root.left == null && root.right == null -> depth + 1
-                else -> max(go(root.left, depth + 1), go(root.right, depth + 1))
-            }
+fun maxDepth(root: TreeNode?): Int {
+    fun go(root: TreeNode?, depth: Int): Int =
+        when {
+            root == null -> 0
+            root.left == null && root.right == null -> depth + 1
+            else -> max(go(root.left, depth + 1), go(root.right, depth + 1))
+        }
 
-        return go(root, depth = 0)
-    }
+    return go(root, depth = 0)
 }
