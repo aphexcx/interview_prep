@@ -11,7 +11,6 @@ simply choose it from the dropdown in the top bar.
 Enjoy your interview!
 
 
-
 Write a function that takes a string as an input and returns the maximum depth of parentheses in this string
 
 String -> Int
@@ -22,7 +21,7 @@ String -> Int
 ()(()) -> 2
 (() -> throw InvalidParenthesesException()
 -> 0
-)(
+)( -> throw InvalidParenthesesException()
  */
 
 const val OPEN: Char = '('
