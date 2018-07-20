@@ -1,4 +1,4 @@
-name := "codepath_interview_prework"
+name := "interview_prep"
 
 version := "0.1"
 
