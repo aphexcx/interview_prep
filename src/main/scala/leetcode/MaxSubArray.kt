@@ -17,7 +17,7 @@ If you have figured out the O(n) solution, try coding another solution using the
 //fun maxSubArray(nums: IntArray): Int {
 //
 //    //starting at midpoint, using sum == current element, expand subarray to the left and right alternating, picking the max of the two
-//    val midpoint: Int = nums.size / 2 + nums.size % 2
+//    value midpoint: Int = nums.size / 2 + nums.size % 2
 //
 //    fun go(arr: IntRange, curMax: Int = 0) {
 //        if (arr.first)
@@ -45,10 +45,10 @@ If you have figured out the O(n) solution, try coding another solution using the
 //fun maxSubArray(nums: IntArray): Int {
 
 //starting at midpoint, using sum == current element, expand subarray to the left and right alternating, picking the max of the two
-//    val midpoint: Int = nums.size / 2 + nums.size % 2
+//    value midpoint: Int = nums.size / 2 + nums.size % 2
 //
 //    fun go(arr: IntArray, range: IntRange, curMax: Int = 0): Int {
-//        val mySum = arr.slice(range).sum()
+//        value mySum = arr.slice(range).sum()
 //        if (mySum > curMax)
 //            return mySum
 //        else

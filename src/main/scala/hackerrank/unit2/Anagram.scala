@@ -53,7 +53,7 @@ object Anagram extends App {
       //          }
       //        }
       //
-      //        val numCharsNeedToReplace = go(a.sorted, b.sorted, 0)
+      //        value numCharsNeedToReplace = go(a.sorted, b.sorted, 0)
       //        println(numCharsNeedToReplace)
       //      }
     }

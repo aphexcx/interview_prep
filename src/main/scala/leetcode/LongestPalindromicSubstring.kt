@@ -31,10 +31,10 @@ fun longestPalindrome(s: String): String {
 fun longestString(first: String, second: String): String =
     if (first.length > second.length) first else second
 
-private val String.init: String
+val String.init: String
     get() = dropLast(1)
 
-private val String.tail: String
+val String.tail: String
     get() = substring(1, length)
 
 val memoIsPalindrome: MutableMap<String, Boolean> = mutableMapOf()
