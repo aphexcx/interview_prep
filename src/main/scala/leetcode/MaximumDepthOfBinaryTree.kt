@@ -19,9 +19,11 @@ Given binary tree [3,9,20,null,null,15,7],
 return its depth = 3.
  */
 
-class TreeNode(var `val`: Int = 0) {
-    var left: TreeNode? = null
-    var right: TreeNode? = null
+class TreeNode(
+    val `val`: Int = 0,
+    val left: TreeNode? = null,
+    val right: TreeNode? = null
+) {
 }
 
 fun maxDepth(root: TreeNode?): Int {
