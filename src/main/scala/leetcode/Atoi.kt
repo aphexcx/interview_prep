@@ -4,7 +4,8 @@ package leetcode
  * Implement atoi which converts a string to an integer.
 
 The function first discards as many whitespace characters as necessary until the first non-whitespace character is found.
-Then, starting from this character, takes an optional initial plus or minus sign followed by as many numerical digits as possible, and interprets them as a numerical value.
+Then, starting from this character, takes an optional initial plus or minus sign followed by as many numerical digits
+as possible, and interprets them as a numerical value.
 
 The string can contain additional characters after those that form the integral number, which are ignored and have no
 effect on the behavior of this function.
@@ -18,8 +19,8 @@ Note:
 
 Only the space character ' ' is considered as whitespace character.
 Assume we are dealing with an environment which could only store integers within the 32-bit signed integer range:
-[−231,  231 − 1]. If the numerical value is out of the range of representable values, INT_MAX (2^31 − 1)
-or INT_MIN (−2^31) is returned.
+[−231,  231 − 1]. If the numerical value is out of the range of representable values, INT_MAX (231 − 1) or
+INT_MIN (−231) is returned.
 
 Example 1:
 
@@ -47,51 +48,77 @@ Example 5:
 Input: "-91283472332"
 Output: -2147483648
 Explanation: The number "-91283472332" is out of the range of a 32-bit signed integer.
-Thefore INT_MIN (−2^31) is returned.
-
+Thefore INT_MIN (−231) is returned.
  */
-
 fun myAtoi(str: String): Int {
-    var sum = 0
-    var stripped = str.dropWhile { it.isWhitespace() }
-    val signMultiplier = when (stripped.firstOrNull()) {
-        '+' -> { // positive
-            stripped = stripped.drop(1)
-            1
+    val stringToConvert = StringBuilder()
+    val firstWhiteSpaceFiltered = str.dropWhile { it == ' ' }
+    firstWhiteSpaceFiltered.firstOrNull().also {
+        when (it) {
+            '+', '-' -> {
+                stringToConvert.append(it)
+            }
         }
-        '-' -> { // negative
-            stripped = stripped.drop(1)
-            -1
-        }
-        null -> return 0 // invalid
-        else -> {
-            1 //no sign
-        }
-    }
-    //find out how long the valid digits are
-    var howLong = 0
-    for (c in stripped) {
-        if (c.isDigit())
-            howLong += 1
-        else
-            break
     }
 
-    var column = Math.pow(10.0, howLong.toDouble() - 1).toInt()
-    // for each digit, add it to the sum * multiplier based on column
-    stripped.forEach {
-        when {
-            it.isDigit() -> {
-                sum += it.toString().toInt() * column
+    firstWhiteSpaceFiltered.drop(stringToConvert.length).forEach {
+        when (it) {
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' -> {
+                stringToConvert.append(it)
             }
-            else -> return sum * signMultiplier
+            else -> {
+                return stringToConvert.toString().toI()
+            }
         }
-        column /= 10
     }
-    return sum * signMultiplier
+    return stringToConvert.toString().toI()
 }
 
+private fun String.toI(): Int {
+    var result = 0
+    if (isEmpty()) return result
+    var isNegative = firstOrNull() == '-'
+    var firstColumn = true
+    var column = 1
+    dropWhile { it == '0' || it == '+' || it == '-' }.reversed().forEach {
+        when (it) {
+            '+' -> {
+            }
+            '-' -> {
+            }
+//            '0' -> {
+//            }
+            else -> {
+                try {
+                    if (firstColumn) {
+                        firstColumn = false
+                    } else {
+                        column = column.multiplyExact(10)
+                    }
+                    result = result.addExact(it.toString().toInt().multiplyExact(column))
+                } catch (e: ArithmeticException) {
+                    return if (isNegative) Int.MIN_VALUE else Int.MAX_VALUE
+                }
+            }
+        }
+
+    }
+
+    return if (isNegative) result * -1 else result
+}
+
+
+//infix fun Int.addExact(other: Int): Int {
+//    return Math.addExact(this, other)
+//}
+
 fun main(args: Array<String>) {
-//    println(myAtoi("words and 987"))
-    println(myAtoi("-91283472332"))
+//    val r = myAtoi("-91283472332")
+//    val r = myAtoi("   +0 123")
+//    val r = myAtoi("0-1")
+//    val r = myAtoi("   -42")
+//    val r = myAtoi("    10522545459")
+//    val r = myAtoi("  0000000000012345678")
+    val r = myAtoi("2147483646")
+    println(r)
 }
