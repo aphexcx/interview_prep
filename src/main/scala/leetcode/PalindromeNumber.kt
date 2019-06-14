@@ -1,6 +1,8 @@
 package leetcode
 
-/** Determine whether an integer is a palindrome. An integer is a palindrome when it reads the same backward as forward.
+/** 9. Palindrome Number
+
+Determine whether an integer is a palindrome. An integer is a palindrome when it reads the same backward as forward.
 
 Example 1:
 
@@ -20,14 +22,31 @@ Follow up:
 
 Coud you solve it without converting the integer to a string?
  */
+
+//fun isPalindrome(x: Int): Boolean {
+//    return x.toString() == x.toString().reversed()
+//}
+
+
+private val Int.digitList: List<Int>
+    get() {
+        val list = mutableListOf<Int>()
+
+        var remaining = this
+        while (remaining > 0) {
+            list.add(remaining % 10)
+            remaining /= 10
+        }
+
+        return list.reversed()
+    }
+
 fun isPalindrome(x: Int): Boolean {
-    return true
+    return x.digitList == x.digitList.reversed() && x >= 0
 }
 
-//121 , []
-fun collectDigits(num: Int, digits: MutableList<Int>) {
-    if (num / 10 > 0) {
-        collectDigits(num / 10, digits);
-    }
-    digits.add(num % 10)
+
+fun main(args: Array<String>) {
+    val r = isPalindrome(121)
+    println(r)
 }
