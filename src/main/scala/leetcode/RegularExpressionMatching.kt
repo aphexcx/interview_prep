@@ -48,59 +48,150 @@ Output: false
  */
 
 fun isMatch(str: String, pattern: String): Boolean {
-    var remaining = str
-    fun consumeOne(): Char? {
-        val first = remaining.firstOrNull()
-//        try {
-        remaining = remaining.substring(1)
-//        } catch (e: IndexOutOfBoundsException) {
-//            return null
-//        }
-        return first
-    }
-
+    val yummy = YummyString(str)
+    var idx = 0
+    val opcodes = pattern.toOpcodes()
+    fun patternCompleted() = idx > opcodes.lastIndex
     try {
-        var prevPat: Char? = null
-        var isRepeating = false
-        pattern.forEachIndexed { index, pat ->
-            when (pat) {
-                in 'a'..'z' -> {
-                    if (pattern[index + 1] != '*') {
-                        if (consumeOne() != pat) return false
-                    }
+        while (idx < opcodes.size) {
+            val opcode: MatcherOpcode = opcodes[idx]
+            when (opcode) {
+                is MatcherOpcode.REPEAT_ZERO_OR_MORE -> {
+                    yummy.eatZeroOrMoreOf(opcode.c)
+                    idx += 1
                 }
-                '.' -> {
-                    consumeOne()
-                }
-                '*' -> {
-                    isRepeating = true
-                    while (isRepeating) {
-                        when (prevPat) {
-                            in 'a'..'z' -> {
-                                if (consumeOne() != prevPat) {
-                                    isRepeating = false
-                                }
-                            }
-                            '.' -> {
-                                consumeOne()
-                            }
+                is MatcherOpcode.CHAR,
+                MatcherOpcode.ANY -> {
+                    try {
+                        if (opcode is MatcherOpcode.CHAR) {
+                            yummy.eat(opcode.c)
+                        } else {
+                            yummy.eatAny()
+                        }
+                        idx += 1
+                    } catch (e: MatchFailedCharNotFoundException) {
+                        if (!patternCompleted() && (opcodes[idx - 1] is MatcherOpcode.REPEAT_ZERO_OR_MORE)) {
+                            yummy.regurgitateOne()
+                        } else {
+                            throw e
                         }
                     }
                 }
             }
-            prevPat = pat
         }
-    } catch (e: IndexOutOfBoundsException) {
-        return remaining.isEmpty()
+    } catch (e: ReachedEndOfStringException) {
+        return yummy.ateEverything && patternCompleted()
+    } catch (e: MatchFailedException) {
+        return false
     }
-    return remaining.isEmpty()
+    return yummy.ateEverything && patternCompleted()
 }
 
+// "bc*a*b" -> REPEAT_ZERO_OR_MORE(c), REPEAT_ZERO_OR_MORE(a), CHAR(b)
+private fun String.toOpcodes(): List<MatcherOpcode> {
+    val opcodes: MutableList<MatcherOpcode> = mutableListOf()
+
+    // coalesce repeats into one opcode and convert chars/anys
+    forEachIndexed { idx: Int, first: Char ->
+        val next = getOrNull(idx + 1)
+        when {
+            first == '*' -> {
+            }
+            next == '*' -> opcodes.add(MatcherOpcode.REPEAT_ZERO_OR_MORE(first))
+            else -> opcodes.add(first.toOpcode())
+        }
+    }
+
+    return opcodes.toList()
+
+}
+
+private fun Char.toOpcode(): MatcherOpcode {
+    return when (this) {
+        '.' -> MatcherOpcode.ANY
+        in 'a'..'z' -> MatcherOpcode.CHAR(this)
+        else -> throw UnrecognizedCharInPatternException(this)
+    }
+}
+
+class UnrecognizedCharInPatternException(c: Char) : Throwable()
+
+sealed class MatcherOpcode(c: Char?) {
+    data class CHAR(val c: Char) : MatcherOpcode(c)
+    data class REPEAT_ZERO_OR_MORE(val c: Char) : MatcherOpcode(c)
+    object ANY : MatcherOpcode(null)
+}
+
+class YummyString(val str: String) {
+
+    private var currentPos: Int = 0
+
+    val ateEverything: Boolean
+        get() = currentPos == str.length
+
+    private fun advance() {
+        currentPos += 1
+    }
+
+    fun regurgitateOne() {
+        currentPos -= 1
+        if (currentPos < 0) currentPos = 0
+    }
+
+    fun eat(c: Char) {
+        if (str.isEmpty()) {
+            throw MatchFailedCharNotFoundException(c, str)
+        }
+        if (currentPos >= str.length) {
+            throw MatchFailedCharNotFoundException(c, str)
+        }
+        if (str[currentPos] == c) {
+            advance()
+        } else {
+            throw MatchFailedCharNotFoundException(c, str.slice(currentPos..str.lastIndex))
+        }
+    }
+
+    fun eatAny() {
+        if (currentPos >= str.length) {
+            throw MatchFailedCharNotFoundException('.', str)
+        }
+        advance()
+
+    }
+
+    fun eatZeroOrMoreOf(c: Char) {
+        try {
+            while (true) {
+                when (c) {
+                    '.' -> eatAny()
+                    else -> eat(c)
+                }
+            }
+        } catch (e: MatchFailedCharNotFoundException) {
+            return
+        } catch (e: ReachedEndOfStringException) {
+            return
+        }
+    }
+}
+
+open class MatchFailedException : Throwable()
+
+class ReachedEndOfStringException : Throwable()
+
+data class MatchFailedCharNotFoundException(val c: Char, val remaining: String) : MatchFailedException()
+
 fun main(args: Array<String>) {
-    println(isMatch("aa", "a"))
-    println(isMatch("aa", "a*"))
-    println(isMatch("ab", ".*"))
+//    println(isMatch("aa", "a"))
+//    println(isMatch("aa", "a*"))
+//    println(isMatch("ab", ".*"))
     println(isMatch("aab", "c*a*b"))
-    println(isMatch("mississippi", "mis*is*p*."))
-    println(isMatch("mississippi", "mis*is*ip*.")) // backtrack case
+//    println(isMatch("mississippi", "mis*is*p*."))
+//    println(isMatch("", "c*"))
+    println(isMatch("ab", ".*c")) // backtrack case
+//    println(isMatch("a", ".*..a*"))
+    println(isMatch("aaa", "aaaa"))
+    println(isMatch("aaa", "a*a"))
+    println(isMatch("ab", ".*"))
 }

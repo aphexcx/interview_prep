@@ -56,6 +56,21 @@ data class Circle(val x: Int, val y: Int, val radius: Int) {
     }
 }
 
+//fun doesPathExist2(circles: List<Circle>): Boolean {
+//    val yRanges = circles.map {
+//        (it.y - it.radius)..(it.y + it.radius)
+//    }
+////            .reduce { acc: IntRange, cur: IntRange ->
+////                val newFirst = Math.min(acc.first, cur.first)
+////                val newLast = Math.max(acc.last, cur.last)
+////
+////                newFirst..newLast
+////            }
+//
+//    return yRanges
+//}
+
+
 fun main(args: Array<String>) {
     // true
     println(doesPathExist(listOf(Circle(10, 10, 30), Circle(25, 25, 20))))
