@@ -47,6 +47,37 @@ p = "mis*is*p*."
 Output: false
  */
 
+
+/**
+ * https://www.youtube.com/watch?v=l3hda49XcDE&list=PLrmLmBdmIlpuE5GEMDXWf0PWbBD9Ga1lO
+ *
+ * He clearly outline the substructure of the problem ie
+1) if current char matches we are good
+2. If current char doesn't match , no hope
+3). if it's *, here's the crux of dp kicks in:
+3.1) first sub structure will come when we DO NOT count the char before * ( we have the memoized result for that in i,j-2)
+3.2) second sub structure will come when when 3.1 is false and do rely on the char before * ( we have memoized the result for that in i-1,j-1)
+
+Imo, he clearly explains above points and that's what is DP all about.
+
+ */
+
+object SolutionRecursion {
+
+
+    fun isMatch(text: String, pattern: String): Boolean {
+        if (pattern.isEmpty()) return text.isEmpty()
+        val firstMatch = text.isNotEmpty() && (pattern[0] == text[0] || pattern[0] == '.')
+
+        return if (pattern.length >= 2 && pattern[1] == '*') {
+            isMatch(text, pattern.substring(2)) ||
+                    firstMatch && isMatch(text.substring(1), pattern)
+        } else {
+            firstMatch && isMatch(text.substring(1), pattern.substring(1))
+        }
+    }
+}
+
 fun isMatch(str: String, pattern: String): Boolean {
     val yummy = YummyString(str)
     var idx = 0

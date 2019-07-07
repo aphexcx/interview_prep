@@ -33,6 +33,16 @@ fun sumToZero(numbers: IntArray): Boolean {
     // }
 }
 
+/**
+first querstion text brackets the ony area thwat he noted that you had a bit of trouble with th final bracket
+by not handling the null and you were able to correct on your own
+he felt like you tok a bit too long
+
+3sum you initially chose to cache the pairs rather than just lists which was a little more complex.
+you can cache the pairs in a hashmap T
+there was a bit of a hiccup to iterate of an array to generate uniqe pairs and you eventually realized iand corrected it,
+
+ */
 
 fun calculateTaxes(income: Int, brackets: List<Pair<Int?, Double>>): Float {
     var remainingIncome = income
