@@ -20,9 +20,9 @@ return its depth = 3.
  */
 
 class TreeNode(
-    val `val`: Int = 0,
-    val left: TreeNode? = null,
-    val right: TreeNode? = null
+        var `val`: Int = 0,
+        var left: TreeNode? = null,
+        var right: TreeNode? = null
 ) {
 }
 
