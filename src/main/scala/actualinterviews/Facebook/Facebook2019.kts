@@ -1,4 +1,4 @@
-package actualinterviews
+package actualinterviews.Facebook
 
 /**
  * Determine if any 3 integers in an array sum to 0.
